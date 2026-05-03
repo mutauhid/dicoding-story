@@ -29,6 +29,7 @@ export default class BookmarksPresenter {
   }
 
   async #onDelete(id) {
+    const safeId = String(id).trim();
     const result = await Swal.fire({
       title: 'Hapus Bookmark?',
       text: 'Yakin ingin menghapus dari bookmark?',
@@ -39,8 +40,8 @@ export default class BookmarksPresenter {
     });
 
     if (result.isConfirmed) {
-      await BookmarkIdb.deleteBookmark(id);
-      this.#allBookmarks = this.#allBookmarks.filter(b => b.id !== id);
+      await BookmarkIdb.deleteBookmark(safeId);
+      this.#allBookmarks = this.#allBookmarks.filter(b => b.id !== safeId);
       
       const searchInput = document.getElementById('search-bookmark');
       const sortSelect = document.getElementById('sort-bookmark');

@@ -30,7 +30,10 @@ export const BookmarkIdb = {
     return (await dbPromise).put(OBJECT_STORE_NAME, story);
   },
   async deleteBookmark(id) {
-    return (await dbPromise).delete(OBJECT_STORE_NAME, id);
+    const db = await dbPromise;
+    const tx = db.transaction(OBJECT_STORE_NAME, 'readwrite');
+    tx.store.delete(id);
+    await tx.done;
   },
 };
 

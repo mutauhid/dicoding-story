@@ -176,31 +176,38 @@ class App {
   }
 
   #setupPWA() {
-    let deferredPrompt;
     const installBtn = document.getElementById('install-app-btn');
-
     if (!installBtn) return;
+
+    const showButton = () => {
+      installBtn.style.display = 'block';
+    };
+
+    if (window.deferredPrompt) {
+      showButton();
+    }
 
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
-      deferredPrompt = e;
-      installBtn.style.display = '';
+      window.deferredPrompt = e;
+      showButton();
     });
 
     installBtn.addEventListener('click', async () => {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
+      if (window.deferredPrompt) {
+        window.deferredPrompt.prompt();
+        const { outcome } = await window.deferredPrompt.userChoice;
         if (outcome === 'accepted') {
           console.log('User accepted the install prompt');
         }
-        deferredPrompt = null;
+        window.deferredPrompt = null;
         installBtn.style.display = 'none';
       }
     });
 
     window.addEventListener('appinstalled', () => {
       installBtn.style.display = 'none';
+      window.deferredPrompt = null;
     });
   }
 }

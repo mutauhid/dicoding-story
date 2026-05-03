@@ -80,10 +80,12 @@ async function syncStories() {
         deleteTx.objectStore('sync-stories').delete(story.id);
         
         // Show notification
-        self.registration.showNotification('Cerita Berhasil Diunggah!', {
-          body: 'Cerita offline Anda berhasil dikirim ke server.',
-          icon: '/favicon.png',
-        });
+        if (Notification.permission === 'granted') {
+          self.registration.showNotification('Cerita Berhasil Diunggah!', {
+            body: 'Cerita offline Anda berhasil dikirim ke server.',
+            icon: '/favicon.png',
+          });
+        }
       }
     } catch (err) {
       console.error('Failed to sync story:', err);
@@ -93,6 +95,8 @@ async function syncStories() {
 
 // Push notification handling
 self.addEventListener('push', (event) => {
+  if (Notification.permission !== 'granted') return;
+
   let data = {
     title: 'Dicoding Story',
     options: { body: 'Ada notifikasi baru!' },
